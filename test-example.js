@@ -1,5 +1,5 @@
 // Exemplo de como testar a API
-const fetch = require('node-fetch'); // Se estiver usando Node.js < 18
+// Para Node.js < 18, instale: npm install node-fetch
 
 async function testAPI() {
   const baseUrl = 'http://localhost:3000';

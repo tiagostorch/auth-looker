@@ -11,6 +11,19 @@ const PORT = process.env.PORT || 3000;
 const LOOKER_HOST = process.env.LOOKER_HOST;
 const LOOKER_EMBED_SECRET = process.env.LOOKER_EMBED_SECRET;
 
+// Verificar configurações na inicialização
+console.log('🔧 Configurações carregadas:');
+console.log(`   - LOOKER_HOST: ${LOOKER_HOST ? '✅ Configurado' : '❌ Não configurado'}`);
+console.log(`   - LOOKER_EMBED_SECRET: ${LOOKER_EMBED_SECRET ? '✅ Configurado' : '❌ Não configurado'}`);
+
+if (!LOOKER_HOST || !LOOKER_EMBED_SECRET) {
+  console.error('\n❌ ERRO: Configurações do Looker não encontradas!');
+  console.error('   Certifique-se de que o arquivo .env existe e contém:');
+  console.error('   - LOOKER_HOST=seu-looker-instance.looker.com');
+  console.error('   - LOOKER_EMBED_SECRET=sua-chave-secreta');
+  console.error('\n   Copie o arquivo env.example para .env e configure as variáveis.');
+}
+
 // Middleware
 app.use(helmet());
 app.use(cors());
@@ -27,7 +40,11 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    service: 'Looker URL Generator API'
+    service: 'Looker URL Generator API',
+    config: {
+      lookerHost: LOOKER_HOST ? '✅ Configurado' : '❌ Não configurado',
+      lookerSecret: LOOKER_EMBED_SECRET ? '✅ Configurado' : '❌ Não configurado'
+    }
   });
 });
 
@@ -61,7 +78,8 @@ app.post('/generate-looker-url', async (req, res) => {
       });
       return res.status(500).json({
         success: false,
-        error: 'Configurações do Looker não encontradas'
+        error: 'Configurações do Looker não encontradas',
+        message: 'Configure LOOKER_HOST e LOOKER_EMBED_SECRET no arquivo .env'
       });
     }
 
